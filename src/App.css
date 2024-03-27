@@ -1,0 +1,42 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+#status-table {
+  border-collapse: collapse;
+  width: 200px;
+}
+
+#status-table td,
+#status-table th {
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 8px;
+  width: 50%;
+}
+
+#status-table td:nth-child(2) {
+  text-align: right;
+  /*display: flex;*/
+  justify-content: flex-end;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animates in, scaled from 0, then pulses up to 110%, and then back to 100% */
+#superhaven-title,
+#status-table {
+  animation: scaleIn 0.5s ease-in-out forwards;
+}
