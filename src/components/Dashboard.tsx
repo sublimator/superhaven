@@ -34,36 +34,37 @@ export const DashBoard: React.FC = () => {
     taskStatus
   }
 
-  const { messages, connected, sendMessage } = useWebSocket<EventData>({
-    url: 'ws://localhost:8080',
-    token: token,
-    reconnect: true,
-    keepUpTo: 50,
-    processMessage: JSON.parse.bind(JSON),
-    onClose: () => {
-      setActiveRepo(null)
-      setServiceTier(null)
-      setTaskStatus(null)
-      setStateId(null)
-      setEnabled(true)
-    },
-    onMessage: message => {
-      if (message.data.kind === 'state_update') {
-        const stateUpdateMessage = message.data
-        setStateId(stateUpdateMessage.newId)
-      }
-      if (message.data.kind === 'passthrough') {
-        const passthrough = message.data.passthrough
-        if (passthrough.kind === 'active_repo') {
-          setActiveRepo(passthrough.repo_simple_name)
-        } else if (passthrough.kind === 'task_status') {
-          setTaskStatus(passthrough.status)
-        } else if (passthrough.kind === 'service_tier') {
-          setServiceTier(passthrough.service_tier)
+  const { messages, connected, totalMessages, sendMessage } =
+    useWebSocket<EventData>({
+      url: 'ws://localhost:8080',
+      token: token,
+      reconnect: true,
+      keepUpTo: 50,
+      processMessage: JSON.parse.bind(JSON),
+      onClose: () => {
+        setActiveRepo(null)
+        setServiceTier(null)
+        setTaskStatus(null)
+        setStateId(null)
+        setEnabled(true)
+      },
+      onMessage: message => {
+        if (message.data.kind === 'state_update') {
+          const stateUpdateMessage = message.data
+          setStateId(stateUpdateMessage.newId)
+        }
+        if (message.data.kind === 'passthrough') {
+          const passthrough = message.data.passthrough
+          if (passthrough.kind === 'active_repo') {
+            setActiveRepo(passthrough.repo_simple_name)
+          } else if (passthrough.kind === 'task_status') {
+            setTaskStatus(passthrough.status)
+          } else if (passthrough.kind === 'service_tier') {
+            setServiceTier(passthrough.service_tier)
+          }
         }
       }
-    }
-  })
+    })
 
   function die() {
     sendMessage({ kind: 'die' })
@@ -95,7 +96,7 @@ export const DashBoard: React.FC = () => {
         <ConnectionTable
           state={state}
           connected={connected}
-          seenMessages={messages[0]?.id}
+          seenMessages={totalMessages}
           messages={messages.length}
         />
         <Box

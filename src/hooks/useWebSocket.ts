@@ -24,6 +24,7 @@ export function useWebSocket<T = string>({
 }: UseWebSocketParams<T>) {
   const [connected, setConnected] = useState(false)
   const [messages, setMessages] = useState<T[]>([])
+  const [totalMessages, setTotalMessages] = useState(0)
   const ws = useRef<WebSocket | null>(null)
 
   // Function to send messages through the WebSocket connection
@@ -41,6 +42,7 @@ export function useWebSocket<T = string>({
     current.onclose = () => {
       onClose?.()
       setMessages([])
+      setTotalMessages(0)
       if (ws.current !== current) {
         // TODO: not entirely sure why this is necessary
         log('WebSocket connection lost onclose', ws.current)
@@ -58,6 +60,7 @@ export function useWebSocket<T = string>({
       console.error('WebSocket error:', error)
     }
     current.onmessage = event => {
+      setTotalMessages(prev => prev + 1)
       const parse = processMessage ? processMessage(event.data) : event.data
       if (parse) {
         setMessages(prevMessages => {
@@ -88,5 +91,5 @@ export function useWebSocket<T = string>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, token, reconnect])
 
-  return { connected, ws: ws.current, messages, sendMessage }
+  return { totalMessages, connected, ws: ws.current, messages, sendMessage }
 }
