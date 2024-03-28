@@ -1,8 +1,18 @@
-import { DataType, EventData, EventType, LogSink } from './types.cjs'
+import {
+  DataType,
+  EventData,
+  EventType,
+  LogSink,
+  WebSocketMessageHandler
+} from './types.cjs'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createServer } from 'http'
 
-export function makeSocketServer(authToken: string, log: LogSink) {
+export function makeSocketServer(
+  authToken: string,
+  log: LogSink,
+  messageHandler: WebSocketMessageHandler
+) {
   let eventId = 0 // Initialize event ID
   const buffer: string[] = []
 
@@ -52,6 +62,14 @@ export function makeSocketServer(authToken: string, log: LogSink) {
     wss.handleUpgrade(request, socket, head, function done(ws) {
       log('WebSocket upgrade done')
       wss.emit('connection', ws, request)
+      ws.on('message', function incoming(message) {
+        try {
+          const messageData = JSON.parse(message.toString())
+          messageHandler(messageData)
+        } catch (e) {
+          log(`Error parsing message: ${e}`)
+        }
+      })
     })
   })
   return { sendEvent, httpServer }

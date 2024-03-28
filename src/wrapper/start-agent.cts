@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { EventSink, LogSink } from './types.cjs'
+import { AgentContext, EventSink, LogSink } from './types.cjs'
 import { makeHandleInputData } from './handle-input-data.cjs'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import { makeOutputFactory } from './make-output-factory.cjs'
@@ -8,9 +8,10 @@ export function startAgent(
   binaryPath: string,
   logStream: fs.WriteStream,
   log: LogSink,
-  sendEvent: EventSink
+  sendEvent: EventSink,
+  context: AgentContext
 ) {
-  const handleInputData = makeHandleInputData(log, sendEvent)
+  const handleInputData = makeHandleInputData(log, sendEvent, context)
   // Capture the original process's argv, removing the first two entries (`node` and script path)
   const args: string[] = process.argv.slice(2)
   // Spawn the child process with the provided arguments

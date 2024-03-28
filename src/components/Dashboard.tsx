@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   Container,
   ListItem,
@@ -23,6 +24,8 @@ export const DashBoard: React.FC = () => {
   const [activeRepo, setActiveRepo] = useState<string | null>(null)
   const [serviceTier, setServiceTier] = useState<string | null>(null)
   const [taskStatus, setTaskStatus] = useState<string | null>(null)
+  const [enabled, setEnabled] = useState<boolean>(true)
+
   const state = {
     token,
     stateId,
@@ -31,7 +34,7 @@ export const DashBoard: React.FC = () => {
     taskStatus
   }
 
-  const { messages, connected } = useWebSocket<EventData>({
+  const { messages, connected, sendMessage } = useWebSocket<EventData>({
     url: 'ws://localhost:8080',
     token: token,
     reconnect: true,
@@ -42,6 +45,7 @@ export const DashBoard: React.FC = () => {
       setServiceTier(null)
       setTaskStatus(null)
       setStateId(null)
+      setEnabled(true)
     },
     onMessage: message => {
       if (message.data.kind === 'state_update') {
@@ -61,6 +65,21 @@ export const DashBoard: React.FC = () => {
     }
   })
 
+  function die() {
+    sendMessage({ kind: 'die' })
+  }
+
+  function toggleEnabled() {
+    setEnabled(val => {
+      const newVal = !val
+      sendMessage({
+        kind: 'set-enabled',
+        enabled: newVal
+      })
+      return newVal
+    })
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <Box
@@ -79,6 +98,27 @@ export const DashBoard: React.FC = () => {
           seenMessages={messages[0]?.id}
           messages={messages.length}
         />
+        <Box
+          className='ease-in-half-second'
+          sx={{
+            mt: 1,
+            width: '100%',
+            gap: 1,
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <Button sx={{ flexGrow: 1 }} variant='outlined' onClick={die}>
+            Die
+          </Button>
+          <Button
+            sx={{ flexGrow: 1 }}
+            variant={enabled ? 'outlined' : 'contained'}
+            onClick={toggleEnabled}
+          >
+            {enabled ? 'Disable' : 'Enable'}
+          </Button>
+        </Box>
       </Box>
       <Typography
         variant='h1'

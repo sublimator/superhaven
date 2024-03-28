@@ -27,9 +27,9 @@ export function useWebSocket<T = string>({
   const ws = useRef<WebSocket | null>(null)
 
   // Function to send messages through the WebSocket connection
-  const sendMessage = useCallback((message: string) => {
+  const sendMessage = useCallback((message: unknown) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(message)
+      ws.current.send(JSON.stringify(message))
     }
   }, [])
 
