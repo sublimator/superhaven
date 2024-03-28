@@ -1,5 +1,7 @@
 # SuperHaven
 
+![image](public/apple-touch-icon.png)
+
 For SuperMaven editor plugin developers, this is a web-based viewer for the SuperMaven agent's stdio,
 which can be quite busy with all the file content.
 
