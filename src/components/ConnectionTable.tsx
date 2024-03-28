@@ -13,7 +13,6 @@ interface ConnectionProps {
     // stateId
     stateId: string | null
     activeRepo: string | null
-    taskStatus: string | null
   }
 }
 
@@ -61,10 +60,6 @@ export const ConnectionTable: React.FC<ConnectionProps> = ({
         <tr>
           <td>Service tier</td>
           <td>{state.serviceTier ?? 'N/A'}</td>
-        </tr>
-        <tr>
-          <td>Task status</td>
-          <td>{state.taskStatus ?? 'N/A'}</td>
         </tr>
       </tbody>
     </table>

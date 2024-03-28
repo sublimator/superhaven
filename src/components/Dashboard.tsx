@@ -24,15 +24,13 @@ export const DashBoard: React.FC = () => {
   const [stateId, setStateId] = useState<string | null>(null)
   const [activeRepo, setActiveRepo] = useState<string | null>(null)
   const [serviceTier, setServiceTier] = useState<string | null>(null)
-  const [taskStatus, setTaskStatus] = useState<string | null>(null)
   const [enabled, setEnabled] = useState<boolean>(true)
 
   const state = {
     token,
     stateId,
     activeRepo,
-    serviceTier,
-    taskStatus
+    serviceTier
   }
 
   const { messages, connected, totalMessages, sendMessage } = useWebSocket<
@@ -50,7 +48,6 @@ export const DashBoard: React.FC = () => {
     onClose: () => {
       setActiveRepo(null)
       setServiceTier(null)
-      setTaskStatus(null)
       setStateId(null)
     },
     onCommand: command => {
@@ -68,7 +65,6 @@ export const DashBoard: React.FC = () => {
         if (passthrough.kind === 'active_repo') {
           setActiveRepo(passthrough.repo_simple_name)
         } else if (passthrough.kind === 'task_status') {
-          setTaskStatus(passthrough.status)
         } else if (passthrough.kind === 'service_tier') {
           setServiceTier(passthrough.service_tier)
         }
