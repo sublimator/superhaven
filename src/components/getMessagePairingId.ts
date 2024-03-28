@@ -1,6 +1,6 @@
-import { SuperMavenMessage } from '../types/messages.ts'
+import { AgentMessage } from '../types/messages.ts'
 
-export function getMessagePairingId(message: SuperMavenMessage) {
+export function getMessagePairingId(message: AgentMessage) {
   if (message.kind === 'state_update') {
     return message.newId
   }

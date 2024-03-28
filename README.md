@@ -3,9 +3,11 @@
 ![image](public/apple-touch-icon.png)
 
 For SuperMaven editor plugin developers, this is a web-based viewer for the SuperMaven agent's stdio,
-which can be quite busy with all the file content.
+which can be quite busy with all the file content (though it's much better now that `touch  ~/sm-log.txt` works)
 
-This is a work in progress.
+This is a work in progress, but may be useful for debugging.
+
+See [src/types/messages.ts](src/types/messages.ts) for the message types.
 
 ## About
 

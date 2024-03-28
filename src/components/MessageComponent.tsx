@@ -1,7 +1,7 @@
 import {
-  ResponseItem,
-  StateUpdate,
-  SuperMavenMessage
+  AgentResponseItem,
+  EditorStateUpdate,
+  AgentMessage
 } from '../types/messages.ts'
 import {
   Accordion,
@@ -17,7 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { InsertDriveFile } from '@mui/icons-material'
 import { CursorUpdateIcon } from './CursorUpdateIcon.tsx'
 
-const renderResponseItem = (item: ResponseItem, index: number) => {
+const renderResponseItem = (item: AgentResponseItem, index: number) => {
   if (item.kind === 'text' || item.kind === 'del' || item.kind === 'dedent') {
     return (
       <Typography key={index} variant='body2'>
@@ -32,7 +32,7 @@ const renderResponseItem = (item: ResponseItem, index: number) => {
     )
   }
 }
-const renderStatusUpdate = (update: StateUpdate, index: number) => {
+const renderStatusUpdate = (update: EditorStateUpdate, index: number) => {
   switch (update.kind) {
     case 'file_update':
       return (
@@ -73,16 +73,16 @@ const renderStatusUpdate = (update: StateUpdate, index: number) => {
       return null // Or a suitable fallback
   }
 }
-export const StateUpdateComponent: React.FC<{ updates: StateUpdate[] }> = ({
-  updates
-}) => {
+export const StateUpdateComponent: React.FC<{
+  updates: EditorStateUpdate[]
+}> = ({ updates }) => {
   return (
     <List>
       {updates.map((update, index) => renderStatusUpdate(update, index))}
     </List>
   )
 }
-const renderMessageContent = (message: SuperMavenMessage) => {
+const renderMessageContent = (message: AgentMessage) => {
   switch (message.kind) {
     case 'response':
       return (
@@ -131,7 +131,7 @@ const renderMessageContent = (message: SuperMavenMessage) => {
 }
 export const MessageComponent: React.FC<{
   type: 'input' | 'output'
-  data: SuperMavenMessage
+  data: AgentMessage
 }> = ({ data }) => {
   return renderMessageContent(data)
 }

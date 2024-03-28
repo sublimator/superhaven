@@ -1,33 +1,35 @@
-/**
- * Outbound messages (sent to stdin)
+/*******************************************************************************
+ * Messages sent from editor to sm-agent stdin
+ * All messages are \n separated JSON encoded objects
  */
 
 // { kind: 'file_update', path: 'foo.txt', content: prompt.value },
-export interface FileUpdate {
+export interface EditorFileUpdate {
   kind: 'file_update'
   path: string
   content: string
 }
 
 // { kind: 'cursor_update', path: 'foo.txt', offset: utf8StringLength(prompt.value) },
-export interface CursorPositionUpdate {
+export interface EditorCursorPositionUpdate {
   kind: 'cursor_update'
   path: string
   offset: number
 }
 
-export type StateUpdate = FileUpdate | CursorPositionUpdate
+export type EditorStateUpdate = EditorFileUpdate | EditorCursorPositionUpdate
 
-export interface StateUpdateMessage {
+export interface EditorStateUpdateMessage {
   kind: 'state_update'
   newId: string
-  updates: Array<StateUpdate>
+  updates: Array<EditorStateUpdate>
 }
 
-export type ToBinaryMessage = StateUpdateMessage
+export type EditorOutMessage = EditorStateUpdateMessage
 
-/**
- * Inbound messages (sent to stdout from the binary)
+/*******************************************************************************
+ * Messages sent from sm-agent to editor
+ * All messages are \n separated JSON encoded objects
  */
 
 /**
@@ -39,7 +41,7 @@ export type ToBinaryMessage = StateUpdateMessage
  * Dedent seems to act upon the previous item, removing equivalent space from it
  * Wonder how that works? Hard to tell
  */
-export type ResponseItem =
+export type AgentResponseItem =
   | {
       kind: 'text' | 'del' | 'dedent'
       text: string
@@ -48,61 +50,61 @@ export type ResponseItem =
       kind: 'end' | 'barrier'
     }
 
-export type BinaryResponse = {
+export type AgentResponse = {
   kind: 'response'
   stateId: string
 
-  items: ResponseItem[]
+  items: AgentResponseItem[]
 }
 
-export type BinaryMetadataMessage = {
+export type AgentMetadataMessage = {
   kind: 'metadata'
   dustStrings?: string[]
 }
 
-export type BinaryApologyMessage = {
+export type AgentApologyMessage = {
   kind: 'apology'
   message?: string
 }
 
-export type BinaryTaskUpdateMessage = {
+export type AgentTaskUpdateMessage = {
   kind: 'task_status'
   task: string
   status: 'in_progress' | 'complete'
 }
 
-export type BinaryActiveRepoMessage = {
+export type AgentActiveRepoMessage = {
   kind: 'active_repo'
   repo_simple_name: string
 }
 
-export type BinaryServiceTierMessage = {
+export type AgentServiceTierMessage = {
   kind: 'service_tier'
   service_tier: string
   display: string
 }
 
-export type BinaryActivationRequestMessage = {
+export type AgentActivationRequestMessage = {
   kind: 'activation_request'
   activateUrl: string
 }
 
-export type BinaryActivationSuccessMessage = {
+export type AgentActivationSuccessMessage = {
   kind: 'activation_success'
 }
 
-export type BinaryPassthroughMessage = {
+export type AgentPassthroughMessage = {
   kind: 'passthrough'
-  passthrough: FromBinaryMessage
+  passthrough: AgentOutMessage
 }
 
-export type BinaryPopupMessage = {
+export type AgentPopupMessage = {
   kind: 'popup'
   message?: string
-  actions?: BinaryPopupAction[]
+  actions?: AgentPopupAction[]
 }
 
-export type BinaryPopupAction =
+export type AgentPopupAction =
   | {
       kind: 'open_url'
       label: string
@@ -114,17 +116,17 @@ export type BinaryPopupAction =
     }
 // Do not delete! This comment is there to stop editor indentation confusion
 
-export type FromBinaryMessage =
-  | BinaryResponse
-  | BinaryMetadataMessage
-  | BinaryApologyMessage
-  | BinaryActivationRequestMessage
-  | BinaryActivationSuccessMessage
-  | BinaryPassthroughMessage
-  | BinaryPopupMessage
-  | BinaryTaskUpdateMessage
-  | BinaryActiveRepoMessage
-  | BinaryServiceTierMessage
+export type AgentOutMessage =
+  | AgentResponse
+  | AgentMetadataMessage
+  | AgentApologyMessage
+  | AgentActivationRequestMessage
+  | AgentActivationSuccessMessage
+  | AgentPassthroughMessage
+  | AgentPopupMessage
+  | AgentTaskUpdateMessage
+  | AgentActiveRepoMessage
+  | AgentServiceTierMessage
 
 /**
  * Misc.
@@ -133,4 +135,4 @@ export interface ClientMessageTest {
   some_data: string
 }
 
-export type SuperMavenMessage = FromBinaryMessage | ToBinaryMessage
+export type AgentMessage = AgentOutMessage | EditorOutMessage
