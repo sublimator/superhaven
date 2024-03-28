@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-interface UseWebSocketParams<T> {
+interface UseWebSocketParams<Buffered, Command> {
   url: string
   token: string
   keepUpTo?: number
   processMessage?: (message: string) => unknown
-  onMessage?: (message: T) => void
+  onMessage?: (message: Buffered) => void
+  onCommand?: (command: Command) => void
+  isMessageBuffered: (message: Buffered | Command) => boolean
   onClose?: () => void
   reconnect?: boolean
   add?: 'front'
@@ -13,17 +15,19 @@ interface UseWebSocketParams<T> {
 
 const log = console.log.bind(console, '[useWebSocket]')
 
-export function useWebSocket<T = string>({
+export function useWebSocket<Buffered = string, Command = string>({
   url,
   token,
   processMessage,
+  isMessageBuffered,
   onMessage,
+  onCommand,
   onClose,
   reconnect = true,
   keepUpTo = 500
-}: UseWebSocketParams<T>) {
+}: UseWebSocketParams<Buffered, Command>) {
   const [connected, setConnected] = useState(false)
-  const [messages, setMessages] = useState<T[]>([])
+  const [messages, setMessages] = useState<Buffered[]>([])
   const [totalMessages, setTotalMessages] = useState(0)
   const ws = useRef<WebSocket | null>(null)
 
@@ -50,8 +54,6 @@ export function useWebSocket<T = string>({
       }
       setConnected(false)
       if (reconnect) {
-        // current.close()
-        // ws.current = null
         setTimeout(connect, 1000)
       }
       log('WebSocket disconnected')
@@ -60,13 +62,17 @@ export function useWebSocket<T = string>({
       console.error('WebSocket error:', error)
     }
     current.onmessage = event => {
-      setTotalMessages(prev => prev + 1)
       const parse = processMessage ? processMessage(event.data) : event.data
       if (parse) {
-        setMessages(prevMessages => {
-          return [parse, ...prevMessages.slice(0, keepUpTo - 1)]
-        })
-        onMessage?.(parse)
+        if (isMessageBuffered(parse)) {
+          setTotalMessages(prev => prev + 1)
+          setMessages(prevMessages => {
+            return [parse, ...prevMessages.slice(0, keepUpTo - 1)]
+          })
+          onMessage?.(parse)
+        } else {
+          onCommand?.(parse)
+        }
       }
     }
   }

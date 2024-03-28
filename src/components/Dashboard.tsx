@@ -16,6 +16,7 @@ import { INPUT_BG, OUTPUT_BG } from '../theme/colors.ts'
 import { MessageComponent } from './MessageComponent.tsx'
 import { getMessagePairingId } from './getMessagePairingId.ts'
 import { ConnectionTable } from './ConnectionTable.tsx'
+import type { ServerMessage } from '../wrapper/types.cjs'
 
 const token = process.env.SUPER_HAVEN_AUTH_TOKEN!
 
@@ -34,37 +35,46 @@ export const DashBoard: React.FC = () => {
     taskStatus
   }
 
-  const { messages, connected, totalMessages, sendMessage } =
-    useWebSocket<EventData>({
-      url: 'ws://localhost:8080',
-      token: token,
-      reconnect: true,
-      keepUpTo: 50,
-      processMessage: JSON.parse.bind(JSON),
-      onClose: () => {
-        setActiveRepo(null)
-        setServiceTier(null)
-        setTaskStatus(null)
-        setStateId(null)
-        setEnabled(true)
-      },
-      onMessage: message => {
-        if (message.data.kind === 'state_update') {
-          const stateUpdateMessage = message.data
-          setStateId(stateUpdateMessage.newId)
-        }
-        if (message.data.kind === 'passthrough') {
-          const passthrough = message.data.passthrough
-          if (passthrough.kind === 'active_repo') {
-            setActiveRepo(passthrough.repo_simple_name)
-          } else if (passthrough.kind === 'task_status') {
-            setTaskStatus(passthrough.status)
-          } else if (passthrough.kind === 'service_tier') {
-            setServiceTier(passthrough.service_tier)
-          }
+  const { messages, connected, totalMessages, sendMessage } = useWebSocket<
+    EventData,
+    ServerMessage
+  >({
+    url: 'ws://localhost:8080',
+    token: token,
+    reconnect: true,
+    keepUpTo: 50,
+    isMessageBuffered: message => {
+      return 'type' in message && !('kind' in message)
+    },
+    processMessage: JSON.parse.bind(JSON),
+    onClose: () => {
+      setActiveRepo(null)
+      setServiceTier(null)
+      setTaskStatus(null)
+      setStateId(null)
+    },
+    onCommand: command => {
+      if (command.kind === 'init') {
+        setEnabled(command.data.isEnabled)
+      }
+    },
+    onMessage: message => {
+      if (message.data.kind === 'state_update') {
+        const stateUpdateMessage = message.data
+        setStateId(stateUpdateMessage.newId)
+      }
+      if (message.data.kind === 'passthrough') {
+        const passthrough = message.data.passthrough
+        if (passthrough.kind === 'active_repo') {
+          setActiveRepo(passthrough.repo_simple_name)
+        } else if (passthrough.kind === 'task_status') {
+          setTaskStatus(passthrough.status)
+        } else if (passthrough.kind === 'service_tier') {
+          setServiceTier(passthrough.service_tier)
         }
       }
-    })
+    }
+  })
 
   function die() {
     sendMessage({ kind: 'die' })
@@ -109,10 +119,17 @@ export const DashBoard: React.FC = () => {
             flexDirection: 'column'
           }}
         >
-          <Button sx={{ flexGrow: 1 }} variant='outlined' onClick={die}>
+          <Button
+            onClick={die}
+            disabled={!connected}
+            sx={{ flexGrow: 1 }}
+            variant='outlined'
+          >
             Die
           </Button>
+
           <Button
+            disabled={!connected}
             sx={{ flexGrow: 1 }}
             variant={enabled ? 'outlined' : 'contained'}
             onClick={toggleEnabled}

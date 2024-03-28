@@ -1,4 +1,6 @@
 import {
+  AgentContext,
+  Command,
   DataType,
   EventData,
   EventType,
@@ -11,6 +13,7 @@ import { createServer } from 'http'
 export function makeSocketServer(
   authToken: string,
   log: LogSink,
+  context: AgentContext,
   messageHandler: WebSocketMessageHandler
 ) {
   let eventId = 0 // Initialize event ID
@@ -62,6 +65,8 @@ export function makeSocketServer(
     wss.handleUpgrade(request, socket, head, function done(ws) {
       log('WebSocket upgrade done')
       wss.emit('connection', ws, request)
+      const msg: Command = { kind: 'init', data: context }
+      ws.send(JSON.stringify(msg))
       ws.on('message', function incoming(message) {
         try {
           const messageData = JSON.parse(message.toString())

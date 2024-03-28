@@ -13,6 +13,7 @@ export type EventSink = (type: EventType, data: DataType) => void
 
 export interface Command<T = any> {
   kind: string
+  id?: number
   data?: T
 }
 
@@ -20,15 +21,22 @@ export interface DieCommand extends Command {
   kind: 'die'
   code?: number
 }
+
 export interface SetEnabledCommand extends Command {
   kind: 'set-enabled'
   enabled: boolean
 }
 
-export type WebSocketMessage = DieCommand | SetEnabledCommand
+export interface InitCommand extends Command {
+  kind: 'init'
+  data: AgentContext
+}
+
+export type ClientMessage = DieCommand | SetEnabledCommand
+export type ServerMessage = InitCommand
 
 export interface WebSocketMessageHandler {
-  (data: WebSocketMessage): void
+  (data: ClientMessage): void
 }
 
 export interface AgentContext {

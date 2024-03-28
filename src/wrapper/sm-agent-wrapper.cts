@@ -14,14 +14,20 @@ const { authToken, binaryPath, logStream, log } = initFromConfig()
 // This checks to see if the parent process (IntelliJ) has died and exits if it has
 setInterval(makeCheckParentProcess(log), 2000)
 log(`Started with: ${JSON.stringify(process.argv)}`)
-const { sendEvent, httpServer } = makeSocketServer(authToken, log, data => {
-  if (data.kind === 'die') {
-    process.exit(data.code ?? 0)
+const { sendEvent, httpServer } = makeSocketServer(
+  authToken,
+  log,
+  context,
+  data => {
+    log(`Received event: ${JSON.stringify(data)}`)
+    if (data.kind === 'die') {
+      process.exit(data.code ?? 0)
+    }
+    if (data.kind === 'set-enabled') {
+      context.isEnabled = data.enabled
+    }
   }
-  if (data.kind === 'set-enabled') {
-    context.isEnabled = data.enabled
-  }
-})
+)
 
 startAgent(binaryPath, logStream, log, sendEvent, context)
 // Start the HTTP server on a specified port, for example, 8080
