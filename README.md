@@ -18,7 +18,7 @@ the developer from the mental burden of parsing the agent's output.
 
 ### Prerequisites
 
-```
+```bash
 git clone https://github.com/sublimator/superhaven.git
 cd superhaven
 pnpm install
@@ -28,7 +28,7 @@ pnpm install
 
 You need to create a `superhaven.config.json` file in ~/.supermaven with this structure:
 
-```
+```json
 {
   "workingDirectory": "/Users/user/.supermaven/binary/v9/macosx-aarch64",
   "authToken": "OPEN_SESAME"
@@ -37,14 +37,14 @@ You need to create a `superhaven.config.json` file in ~/.supermaven with this st
 
 ### Building and installing agent wrapper
 
-```
+```bash
 pnpm build:wrapper
 ```
 
 We use a symlink to the dist directory so that any modifications to the wrapper
 are available without extra effort.
 
-```
+```bash
 # Install the symlink
 cd ~/.supermaven/binary/v9/macosx-aarch64 # depends on version/arch 
 mv sm-agent sm-agent-real
@@ -56,6 +56,6 @@ TODO: pnpm install $path-to-binary
 
 ### Viewing the SuperHaven Dashboard
 
-```
+```bash
 pnpm dev:open
 ```
