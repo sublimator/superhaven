@@ -89,107 +89,121 @@ export const DashBoard: React.FC = () => {
 
   return (
     <ThemeProvider theme={darkTheme}>
+      {/*box fiexd to the left*/}
       <Box
         sx={{
-          position: 'fixed',
-          top: '50px',
-          right: '50px',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'end'
+          flexDirection: 'row',
+          justifyContent: 'space-between'
         }}
       >
-        <ConnectionTable
-          state={state}
-          connected={connected}
-          seenMessages={totalMessages}
-          messages={messages.length}
-        />
         <Box
           className='ease-in-half-second'
           sx={{
-            mt: 1,
-            width: '100%',
-            gap: 1,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            alignItems: 'end'
           }}
         >
-          <Button
-            onClick={die}
-            disabled={!connected}
-            sx={{ flexGrow: 1 }}
-            variant='outlined'
-          >
-            Die
-          </Button>
+          <img src='/apple-touch-icon.png' alt='apple touch icon' />
+        </Box>
 
-          <Button
-            disabled={!connected}
-            sx={{ flexGrow: 1 }}
-            variant={enabled ? 'outlined' : 'contained'}
-            onClick={toggleEnabled}
+        <Box>
+          <Typography variant='h1' gutterBottom id='superhaven-title'>
+            SuperHaven
+          </Typography>
+          <Container maxWidth='md'>
+            <Box>
+              {messages.map((m, ix) => {
+                const id = getMessagePairingId(m.data)
+                const passthrough = m.data.kind === 'passthrough'
+                return (
+                  <Box
+                    key={ix}
+                    maxWidth='md'
+                    sx={{
+                      width: '100%',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      backgroundColor: m.type === 'input' ? INPUT_BG : OUTPUT_BG
+                    }}
+                  >
+                    {(id || passthrough) && (
+                      <Box>
+                        <Card
+                          sx={{
+                            p: 1,
+                            m: 2,
+                            boxSizing: 'border-box',
+                            borderRadius: '5px',
+                            border: `3px solid ${
+                              id === stateId ? 'darkgreen' : 'transparent'
+                            }`
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              width: '2rem'
+                            }}
+                            variant='body2'
+                          >
+                            {(id && id) || (passthrough && <CompareArrows />)}
+                          </Typography>
+                        </Card>
+                      </Box>
+                    )}
+                    <ListItem>
+                      <MessageComponent type={m.type} data={m.data} />
+                    </ListItem>
+                  </Box>
+                )
+              })}
+            </Box>
+          </Container>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'end'
+          }}
+        >
+          <ConnectionTable
+            state={state}
+            connected={connected}
+            seenMessages={totalMessages}
+            messages={messages.length}
+          />
+          <Box
+            className='ease-in-half-second'
+            sx={{
+              mt: 1,
+              width: '100%',
+              gap: 1,
+              display: 'flex',
+              flexDirection: 'column'
+            }}
           >
-            {enabled ? 'Disable' : 'Enable'}
-          </Button>
+            <Button
+              onClick={die}
+              disabled={!connected}
+              sx={{ flexGrow: 1 }}
+              variant='outlined'
+            >
+              Die
+            </Button>
+
+            <Button
+              disabled={!connected}
+              sx={{ flexGrow: 1 }}
+              variant={enabled ? 'outlined' : 'contained'}
+              onClick={toggleEnabled}
+            >
+              {enabled ? 'Disable' : 'Enable'}
+            </Button>
+          </Box>
         </Box>
       </Box>
-      <Typography
-        variant='h1'
-        component='h1'
-        gutterBottom
-        id='superhaven-title'
-      >
-        SuperHaven
-      </Typography>
-      <Container maxWidth='md'>
-        <Box>
-          {messages.map((m, ix) => {
-            const id = getMessagePairingId(m.data)
-            const passthrough = m.data.kind === 'passthrough'
-            return (
-              <Box
-                key={ix}
-                maxWidth='md'
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  backgroundColor: m.type === 'input' ? INPUT_BG : OUTPUT_BG
-                }}
-              >
-                {(id || passthrough) && (
-                  <Box>
-                    <Card
-                      sx={{
-                        p: 1,
-                        m: 2,
-                        boxSizing: 'border-box',
-                        borderRadius: '5px',
-                        border: `3px solid ${
-                          id === stateId ? 'darkgreen' : 'transparent'
-                        }`
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          width: '2rem'
-                        }}
-                        variant='body2'
-                      >
-                        {(id && id) || (passthrough && <CompareArrows />)}
-                      </Typography>
-                    </Card>
-                  </Box>
-                )}
-                <ListItem>
-                  <MessageComponent type={m.type} data={m.data} />
-                </ListItem>
-              </Box>
-            )
-          })}
-        </Box>
-      </Container>
     </ThemeProvider>
   )
 }
