@@ -28,7 +28,8 @@ pnpm install
 
 ### Configuration
 
-You need to create a `superhaven.config.json` file in ~/.supermaven with this structure:
+You need to create a `superhaven.config.json` file in ~/.supermaven.
+See [docs/superhaven.config.json](docs/superhaven.config.json) for an example.
 
 ```json
 {
@@ -46,24 +47,19 @@ You need to create a `superhaven.config.json` file in ~/.supermaven with this st
 }
 ```
 
-### Building and installing agent wrapper
+Note: `logFile` is optional, for developing.
+You can simply use the dash or touch ~/sm-log.txt.
 
-```bash
-pnpm build:wrapper
-```
+### Building and installing agent wrapper
 
 We use a symlink to the dist directory so that any modifications to the wrapper
 are available without extra effort.
 
-```bash
-# Install the symlink
-cd ~/.supermaven/binary/v9/macosx-aarch64 # depends on version/arch 
-mv sm-agent sm-agent-real
-ln -s $REPO_ROOT/dist/sm-agent-wrapper.js sm-agent
-chmod +x sm-agent
-```
+Requires setting the config first!
 
-TODO: pnpm install $path-to-binary
+```bash
+pnpm install:wrapper
+```
 
 ### Viewing the SuperHaven Dashboard
 

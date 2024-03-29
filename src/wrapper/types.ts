@@ -64,3 +64,5 @@ export interface SuperHavenConfig {
   authToken: string
   projects: Record<ProjectName, ProjectConfig>
 }
+
+export type DieFunc = (message: string) => never
