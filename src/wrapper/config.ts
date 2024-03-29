@@ -15,8 +15,11 @@ function createLog(config: SuperHavenConfig) {
     })
   }
   return (data: string) => {
+    if (logStream === null) {
+      return
+    }
     const redacted = data.replace(config.authToken, '<auth-token>')
-    logStream?.write(redacted + '\n')
+    logStream.write(redacted + '\n')
   }
 }
 
