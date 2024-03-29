@@ -1,12 +1,10 @@
-import { expandTilde } from './expand-tilde.cjs'
+// noinspection DuplicatedCode
+
+import { expandTilde } from './expand-tilde.ts'
 import path from 'node:path'
 import fs from 'node:fs'
-import { die } from '../die.cjs'
-
-interface SuperHavenConfig {
-  workingDirectory: string
-  authToken: string
-}
+import { die } from '../die.ts'
+import { SuperHavenConfig } from '../types.ts'
 
 export function readSuperHavenConfig(): SuperHavenConfig {
   const superMavenHome = expandTilde('~/.supermaven')

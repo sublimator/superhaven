@@ -77,12 +77,16 @@ export const StateUpdateComponent: React.FC<{
   updates: EditorStateUpdate[]
 }> = ({ updates }) => {
   return (
-    <List>
-      {updates.map((update, index) => renderStatusUpdate(update, index))}
-    </List>
+    <Box>
+      <List>
+        {updates.map((update, index) => renderStatusUpdate(update, index))}
+      </List>
+    </Box>
   )
 }
-const renderMessageContent = (message: AgentMessage) => {
+const renderMessageContent = (
+  message: AgentMessage & { ignored?: boolean }
+) => {
   switch (message.kind) {
     case 'response':
       return (

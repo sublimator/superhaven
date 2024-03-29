@@ -33,7 +33,15 @@ You need to create a `superhaven.config.json` file in ~/.supermaven with this st
 ```json
 {
   "workingDirectory": "/Users/user/.supermaven/binary/v9/macosx-aarch64",
-  "authToken": "OPEN_SESAME"
+  "authToken": "OPEN_SESAME",
+  "projects": {
+    "superhaven": {
+      "root": "/Users/user/projects/superhaven",
+      "ignoreGlobs": [
+        "**/.env"
+      ]
+    }
+  }
 }
 ```
 
@@ -50,7 +58,7 @@ are available without extra effort.
 # Install the symlink
 cd ~/.supermaven/binary/v9/macosx-aarch64 # depends on version/arch 
 mv sm-agent sm-agent-real
-ln -s $REPO_ROOT/dist/src/wrapper/sm-agent-wrapper.cjs sm-agent
+ln -s $REPO_ROOT/dist/sm-agent-wrapper.js sm-agent
 chmod +x sm-agent
 ```
 

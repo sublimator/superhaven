@@ -11,6 +11,7 @@ export interface EventData {
 export type LogSink = (data: string) => void
 export type EventSink = (type: EventType, data: DataType) => void
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Command<T = any> {
   kind: string
   id?: number
@@ -36,9 +37,29 @@ export type ClientMessage = DieCommand | SetEnabledCommand
 export type ServerMessage = InitCommand
 
 export interface WebSocketMessageHandler {
-  (data: ClientMessage): void
+  (data: ClientMessage, sendMessage: (message: unknown) => void): void
 }
 
 export interface AgentContext {
   isEnabled: boolean
+  activeRepo: string | null
+  config: SuperHavenConfig
+}
+
+// Matching the project set by kind:active_repo
+type ProjectName = string
+
+interface ProjectConfig {
+  // Collection of minimatch patterns to match against the path
+  // to determine if the file should be ignored or not
+  ignoreGlobs?: string[]
+  // Absolute path to the project root
+  // Any path that starts with this will have ignoreGlobs applied
+  root: string
+}
+
+export interface SuperHavenConfig {
+  workingDirectory: string
+  authToken: string
+  projects: Record<ProjectName, ProjectConfig>
 }

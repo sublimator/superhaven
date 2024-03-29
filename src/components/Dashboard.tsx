@@ -12,11 +12,11 @@ import { CompareArrows } from '@mui/icons-material'
 import { EventData } from '../types/event-data.ts'
 import { useWebSocket } from '../hooks/useWebSocket.ts'
 import { darkTheme } from '../theme/theme.tsx'
-import { INPUT_BG, OUTPUT_BG } from '../theme/colors.ts'
+import { INPUT_BG, OUTPUT_BG, IGNORED_BG } from '../theme/colors.ts'
 import { MessageComponent } from './MessageComponent.tsx'
 import { getMessagePairingId } from './getMessagePairingId.ts'
 import { ConnectionTable } from './ConnectionTable.tsx'
-import type { ServerMessage } from '../wrapper/types.cjs'
+import type { ServerMessage } from '../wrapper/types.ts'
 
 const token = process.env.SUPER_HAVEN_AUTH_TOKEN!
 
@@ -65,6 +65,7 @@ export const DashBoard: React.FC = () => {
         if (passthrough.kind === 'active_repo') {
           setActiveRepo(passthrough.repo_simple_name)
         } else if (passthrough.kind === 'task_status') {
+          // TODO: handle task status
         } else if (passthrough.kind === 'service_tier') {
           setServiceTier(passthrough.service_tier)
         }
@@ -125,7 +126,12 @@ export const DashBoard: React.FC = () => {
                       width: '100%',
                       display: 'flex',
                       flexDirection: 'row',
-                      backgroundColor: m.type === 'input' ? INPUT_BG : OUTPUT_BG
+                      backgroundColor:
+                        m.type === 'input'
+                          ? m.data.ignored
+                            ? IGNORED_BG
+                            : INPUT_BG
+                          : OUTPUT_BG
                     }}
                   >
                     {(id || passthrough) && (
