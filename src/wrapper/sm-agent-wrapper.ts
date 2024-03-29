@@ -5,7 +5,7 @@ import { makeSocketServer } from './make-socket-server.ts'
 import { startAgent } from './start-agent.ts'
 import { AgentContext } from './types.ts'
 
-const { authToken, binaryPath, logStream, log, config } = initFromConfig()
+const { authToken, binaryPath, log, config } = initFromConfig()
 const context: AgentContext = {
   activeRepo: null,
   isEnabled: true,
@@ -30,7 +30,7 @@ const { sendEvent, httpServer } = makeSocketServer(
   }
 )
 
-startAgent(binaryPath, logStream, log, sendEvent, context, jsonObj => {
+startAgent(binaryPath, log, sendEvent, context, jsonObj => {
   if (jsonObj.kind === 'passthrough') {
     const passthrough = jsonObj.passthrough
     if (passthrough.kind === 'active_repo') {
