@@ -59,7 +59,8 @@ interface ProjectConfig {
 }
 
 export interface SuperHavenConfig {
-  workingDirectory: string
+  logFile?: string
+  binaryDirectory: string
   authToken: string
   projects: Record<ProjectName, ProjectConfig>
 }

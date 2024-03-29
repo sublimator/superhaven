@@ -1,4 +1,3 @@
-import fs from 'node:fs'
 import { AgentContext, EventSink, LogSink } from './types.ts'
 import { makeHandleInputData } from './handle-input-data.ts'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
@@ -7,7 +6,6 @@ import { AgentOutMessage } from '../types/messages.ts'
 
 export function startAgent(
   binaryPath: string,
-  logStream: fs.WriteStream,
   log: LogSink,
   sendEvent: EventSink,
   context: AgentContext,
@@ -40,13 +38,11 @@ export function startAgent(
 
   childProcess.on('exit', (code: number | null) => {
     log(`Process exited with code: ${code}`)
-    logStream.close()
     process.exit(code ?? 0)
   })
 
   childProcess.on('error', (err: Error) => {
     console.error(`Failed to start subprocess: ${err}`)
     log(`Failed to start subprocess: ${err}`)
-    logStream.close()
   })
 }

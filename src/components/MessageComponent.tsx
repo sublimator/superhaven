@@ -1,7 +1,7 @@
 import {
+  AgentMessage,
   AgentResponseItem,
-  EditorStateUpdate,
-  AgentMessage
+  EditorStateUpdate
 } from '../types/messages.ts'
 import {
   Accordion,
