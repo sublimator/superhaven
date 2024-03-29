@@ -1,5 +1,6 @@
 {
-  "name": "vite-templated",
+  "name": "@superhaven/wrapper",
+  "description": "SuperHaven is your friendly SuperMaven agent middleman. View/block messages and ignore files.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
