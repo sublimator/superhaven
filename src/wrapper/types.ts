@@ -50,10 +50,11 @@ export interface AgentContext {
 type ProjectName = string
 
 interface ProjectConfig {
-  // collection of regexes to match against the path
+  // Collection of minimatch patterns to match against the path
   // to determine if the file should be ignored or not
   ignoreGlobs?: string[]
   // Absolute path to the project root
+  // Any path that starts with this will have ignoreGlobs applied
   root: string
 }
 
