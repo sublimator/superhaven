@@ -4,7 +4,7 @@ import { createWriteStream } from 'fs'
 import { die } from './die.ts'
 import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
 import { SuperHavenConfig } from './types.ts'
-import { expandTilde } from './config/expand-tilde.ts'
+import { expandTildeInPaths } from './expand-tilde-in-paths.ts'
 
 function createLog(config: SuperHavenConfig) {
   let logStream: fs.WriteStream | null = null
@@ -21,20 +21,6 @@ function createLog(config: SuperHavenConfig) {
     const redacted = data.replace(config.authToken, '<auth-token>')
     logStream.write(redacted + '\n')
   }
-}
-
-function expandTildeInPaths(c: SuperHavenConfig) {
-  c.binaryDirectory = expandTilde(c.binaryDirectory)
-  if (c.logFile) {
-    c.logFile = expandTilde(c.logFile)
-  }
-  c.projects = Object.fromEntries(
-    Object.entries(c.projects).map(([k, v]) => {
-      v.root = expandTilde(v.root)
-      return [k, v]
-    })
-  )
-  return c
 }
 
 export function initFromConfig() {
