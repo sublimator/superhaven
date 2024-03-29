@@ -2,12 +2,18 @@
   "compilerOptions": {
     "composite": true,
     "skipLibCheck": true,
+    "noEmit": true,
     "module": "ESNext",
+    "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
   "include": [
     "vite.config.ts",
+    "src/wrapper/config/read-super-haven-config.ts",
+    "src/wrapper/config/expand-tilde.ts",
+    "src/wrapper/die.ts",
+    "src/wrapper/types.ts",
   ]
 }

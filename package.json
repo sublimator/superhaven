@@ -7,8 +7,8 @@
     "dev": "vite",
     "dev:open": "vite --open",
     "format": "prettier --write src",
-    "build:wrapper": "tsc --project tsconfig.wrapper.json",
-    "build:wrapper:watch": "tsc --project tsconfig.wrapper.json --watch",
+    "build:wrapper": "rollup -c",
+    "build:wrapper:watch": "pnpm build:wrapper --watch",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -20,11 +20,15 @@
     "@mui/material": "^5.15.14",
     "@types/node": "^20.11.30",
     "@types/ws": "^8.5.10",
+    "minimatch": "^9.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -36,7 +40,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "prettier": "^3.2.5",
+    "rollup": "^4.13.2",
+    "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "vite": "^5.2.0",
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

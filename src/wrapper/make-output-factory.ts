@@ -1,9 +1,10 @@
-import { EventSink, LogSink } from './types.cjs'
+import { LogSink } from './types.ts'
+import { AgentOutMessage } from '../types/messages.ts'
 
 export function makeOutputFactory(
   type: string,
   LOG: LogSink,
-  sendEvent: EventSink
+  onOutMessage: (message: AgentOutMessage) => void
 ) {
   // Buffer for stdout to handle data until newline
   let stdoutBuffer: string = ''
@@ -15,11 +16,14 @@ export function makeOutputFactory(
     lines.forEach((line: string) => {
       LOG(`${type}: ${line}`)
       if (line.startsWith('SM-MESSAGE')) {
-        const jsonStr: string = line.replace('SM-MESSAGE ', '')
+        const jsonStr = line.replace('SM-MESSAGE ', '')
         try {
-          const jsonObj: object = JSON.parse(jsonStr)
-          // Post 'output' event
-          sendEvent('output', jsonObj)
+          const jsonObj = JSON.parse(jsonStr)
+          try {
+            onOutMessage(jsonObj)
+          } catch (e) {
+            LOG(`Error sending out message: ${e}`)
+          }
         } catch (error) {
           LOG(`JSON parsing error: ${error}`)
         }

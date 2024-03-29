@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import { join } from 'path'
 import { createWriteStream } from 'fs'
-import { die } from './die.cjs'
-import { readSuperHavenConfig } from './config/read-super-haven-config.cjs'
+import { die } from './die.ts'
+import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
 
 export function initFromConfig() {
   const config = readSuperHavenConfig()
@@ -21,7 +21,8 @@ export function initFromConfig() {
     { flags: 'a' }
   )
   const log = (data: string) => {
-    logStream.write(data + '\n')
+    const redacted = data.replace(config.authToken, '<auth-token>')
+    logStream.write(redacted + '\n')
   }
-  return { authToken: config.authToken, binaryPath, logStream, log }
+  return { authToken: config.authToken, binaryPath, logStream, log, config }
 }
