@@ -32,11 +32,12 @@ You need to create a `superhaven.config.json` file in ~/.supermaven with this st
 
 ```json
 {
-  "workingDirectory": "/Users/user/.supermaven/binary/v9/macosx-aarch64",
+  "binaryDirectory": "~/.supermaven/binary/v9/macosx-aarch64",
+  "logFile": "~/.supermaven/superhaven.log",
   "authToken": "OPEN_SESAME",
   "projects": {
     "superhaven": {
-      "root": "/Users/user/projects/superhaven",
+      "root": "~/projects/superhaven",
       "ignoreGlobs": [
         "**/.env"
       ]
