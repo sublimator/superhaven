@@ -28,7 +28,8 @@ pnpm install
 
 ### Configuration
 
-You need to create a `superhaven.config.json` file in ~/.supermaven with this structure:
+You need to create a `superhaven.config.json` file in ~/.supermaven.
+See [docs/superhaven.config.json](docs/superhaven.config.json) for an example.
 
 ```json
 {

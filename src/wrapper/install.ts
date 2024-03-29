@@ -9,6 +9,7 @@ import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
 import { expandTildeInPaths } from './expand-tilde-in-paths.ts'
 import { expandTilde } from './config/expand-tilde.ts'
 
+const configPathHuman = '~/.supermaven/superhaven.config.json'
 const rootDir = fileURLToPath(new URL('../..', import.meta.url)).slice(0, -1)
 const wrapperBuildPath = `${rootDir}/dist/sm-agent-wrapper.js`
 
@@ -25,8 +26,8 @@ if (process.platform === 'win32') {
 
 log('Using superhaven checkout:', rootDir)
 
-if (!fs.existsSync(expandTilde('~/.supermaven/superhaven.config.json'))) {
-  die('No superhaven.config.json found. Please run `superhaven init` first.')
+if (!fs.existsSync(expandTilde(configPathHuman))) {
+  die(`No ${configPathHuman} found (auto init TBD)`)
 }
 
 const rawConfig = readSuperHavenConfig(die)
