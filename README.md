@@ -16,6 +16,11 @@ agent's stdio for viewing in a browser.
 Having a structured log viewer makes the sm-agent much more accessible and relieves
 the developer from the mental burden of parsing the agent's output.
 
+## WARNING NOTE
+
+It will definitely not work very well with very large files, given that
+it sends the content to the browser encoded as json!
+
 ## Usage
 
 ### Prerequisites
