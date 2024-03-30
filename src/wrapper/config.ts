@@ -5,6 +5,7 @@ import { die } from './die.ts'
 import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
 import { SuperHavenConfig } from './types.ts'
 import { expandTildeInPaths } from './expand-tilde-in-paths.ts'
+import { getAgentVersion } from './get-agent-version.ts'
 
 function createLog(config: SuperHavenConfig) {
   let logStream: fs.WriteStream | null = null
@@ -35,7 +36,7 @@ export function initFromConfig() {
   if (!fs.existsSync(binaryPath)) {
     die(`sm-agent-real not found at ${binaryPath}`)
   }
-
+  const version = getAgentVersion(binaryPath)
   const log = createLog(config)
-  return { authToken: config.authToken, binaryPath, log, config }
+  return { authToken: config.authToken, binaryPath, log, config, version }
 }

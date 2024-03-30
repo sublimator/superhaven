@@ -15,7 +15,7 @@ import { darkTheme } from '../theme/theme.tsx'
 import { IGNORED_BG, INPUT_BG, OUTPUT_BG } from '../theme/colors.ts'
 import { MessageComponent } from './MessageComponent.tsx'
 import { getMessagePairingId } from './getMessagePairingId.ts'
-import { ConnectionTable } from './ConnectionTable.tsx'
+import { InfoTable } from './InfoTable.tsx'
 import type { ServerMessage } from '../wrapper/types.ts'
 
 const token = process.env.SUPER_HAVEN_AUTH_TOKEN!
@@ -25,8 +25,10 @@ export const DashBoard: React.FC = () => {
   const [activeRepo, setActiveRepo] = useState<string | null>(null)
   const [serviceTier, setServiceTier] = useState<string | null>(null)
   const [enabled, setEnabled] = useState<boolean>(true)
+  const [binaryVersion, setBinaryVersion] = useState<number | null>(null)
 
   const state = {
+    binaryVersion,
     token,
     stateId,
     activeRepo,
@@ -49,10 +51,12 @@ export const DashBoard: React.FC = () => {
       setActiveRepo(null)
       setServiceTier(null)
       setStateId(null)
+      setBinaryVersion(null)
     },
     onCommand: command => {
       if (command.kind === 'init') {
         setEnabled(command.data.isEnabled)
+        setBinaryVersion(command.data.binaryVersion)
       }
     },
     onMessage: message => {
@@ -174,7 +178,7 @@ export const DashBoard: React.FC = () => {
             alignItems: 'end'
           }}
         >
-          <ConnectionTable
+          <InfoTable
             state={state}
             connected={connected}
             seenMessages={totalMessages}

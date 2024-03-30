@@ -5,10 +5,11 @@ import { makeSocketServer } from './make-socket-server.ts'
 import { startAgent } from './start-agent.ts'
 import { AgentContext } from './types.ts'
 
-const { authToken, binaryPath, log, config } = initFromConfig()
+const { authToken, version, binaryPath, log, config } = initFromConfig()
 const context: AgentContext = {
-  activeRepo: null,
   isEnabled: true,
+  activeRepo: null,
+  binaryVersion: version,
   config
 }
 
