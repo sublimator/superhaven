@@ -1,4 +1,4 @@
-import { AgentMessage } from '../types/messages.ts'
+import { AgentMessage } from '../types/messages'
 
 export function getMessagePairingId(message: AgentMessage) {
   if (message.kind === 'state_update') {

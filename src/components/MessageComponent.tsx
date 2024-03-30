@@ -1,8 +1,4 @@
-import {
-  AgentMessage,
-  AgentResponseItem,
-  EditorStateUpdate
-} from '../types/messages.ts'
+import { AgentMessage } from '../types/messages'
 import {
   Accordion,
   AccordionDetails,
@@ -16,6 +12,8 @@ import React from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { InsertDriveFile } from '@mui/icons-material'
 import { CursorUpdateIcon } from './CursorUpdateIcon.tsx'
+import { EditorStateUpdate } from '../types/messages/editor-out-messages.ts'
+import { AgentResponseItem } from '../types/messages/agent-out-messages.ts'
 
 const renderResponseItem = (item: AgentResponseItem, index: number) => {
   if (item.kind === 'text' || item.kind === 'del' || item.kind === 'dedent') {

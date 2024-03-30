@@ -1,6 +1,7 @@
 import { AgentContext, EventSink, LogSink } from './types.ts'
 import { minimatch } from 'minimatch'
-import type { EditorOutMessage } from '../types/messages.js'
+
+import { EditorOutMessage } from '../types/messages/editor-out-messages.ts'
 
 function findProjectName(path: string, context: AgentContext) {
   const projectNames = Object.keys(context.config.projects)
