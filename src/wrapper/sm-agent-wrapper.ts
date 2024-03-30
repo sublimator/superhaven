@@ -1,23 +1,16 @@
-// TODO: use a generic shebang for node
-import { initFromConfig } from './config.ts'
+import { initContextFromConfig } from './config.ts'
 import { makeCheckParentProcess } from './check-parent-process.ts'
 import { makeSocketServer } from './make-socket-server.ts'
 import { startAgent } from './start-agent.ts'
-import { AgentContext } from './types.ts'
 
-const { authToken, version, binaryPath, log, config } = initFromConfig()
-const context: AgentContext = {
-  isEnabled: true,
-  activeRepo: null,
-  binaryVersion: version,
-  config
-}
+const { binaryPath, log, config, context } = initContextFromConfig()
 
 // This checks to see if the parent process (IntelliJ) has died and exits if it has
 setInterval(makeCheckParentProcess(log), 2000)
+
 log(`Started with: ${JSON.stringify(process.argv)} in ${process.cwd()}`)
 const { sendEvent, httpServer } = makeSocketServer(
-  authToken,
+  config.authToken,
   log,
   context,
   data => {
@@ -42,7 +35,6 @@ startAgent(binaryPath, log, sendEvent, context, jsonObj => {
   sendEvent('output', jsonObj)
 })
 
-// Start the HTTP server on a specified port, for example, 8080
-httpServer.listen(8080, () => {
-  log('WebSocket server listening on port 8080')
+httpServer.listen(config.port, () => {
+  log(`WebSocket server listening on port ${config.port}`)
 })
