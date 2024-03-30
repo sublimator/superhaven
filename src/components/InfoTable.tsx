@@ -1,13 +1,14 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Box, Tooltip } from '@mui/material'
 import ConnectionStatus from './ConnectionStatus.tsx'
 import { ellipsis } from '../utils/ellipsis.ts'
 
-interface ConnectionProps {
+interface InfoProps {
   connected: boolean
   messages: number
   seenMessages?: number | null
   state: {
+    binaryVersion: number | null
     token: string
     serviceTier: string | null
     // stateId
@@ -16,7 +17,13 @@ interface ConnectionProps {
   }
 }
 
-export const ConnectionTable: React.FC<ConnectionProps> = ({
+const UN_KNOWN = (
+  <Tooltip title='Not yet known, can use DIE to refresh'>
+    <span>(waiting)</span>
+  </Tooltip>
+)
+
+export const InfoTable: React.FC<InfoProps> = ({
   connected,
   messages,
   seenMessages,
@@ -40,6 +47,10 @@ export const ConnectionTable: React.FC<ConnectionProps> = ({
           </td>
         </tr>
         <tr>
+          <td>Binary Version</td>
+          <td>{state.binaryVersion ?? UN_KNOWN}</td>
+        </tr>
+        <tr>
           <td>Token</td>
           <td>{ellipsis(state.token, 10)}</td>
         </tr>
@@ -51,15 +62,15 @@ export const ConnectionTable: React.FC<ConnectionProps> = ({
         </tr>
         <tr>
           <td>State</td>
-          <td>{state.stateId ?? 'N/A'}</td>
+          <td>{state.stateId ?? UN_KNOWN}</td>
         </tr>
         <tr>
           <td>Active repo</td>
-          <td>{state.activeRepo ?? 'N/A'}</td>
+          <td>{state.activeRepo ?? UN_KNOWN}</td>
         </tr>
         <tr>
           <td>Service tier</td>
-          <td>{state.serviceTier ?? 'N/A'}</td>
+          <td>{state.serviceTier ?? UN_KNOWN}</td>
         </tr>
       </tbody>
     </table>

@@ -42,6 +42,7 @@ export interface WebSocketMessageHandler {
 
 export interface AgentContext {
   isEnabled: boolean
+  binaryVersion: number
   activeRepo: string | null
   config: SuperHavenConfig
 }
