@@ -5,7 +5,7 @@ import { startAgent } from './start-agent.ts'
 import { AgentContext } from './types.ts'
 
 const { authToken, version, binaryPath, log, config } = initFromConfig()
-const port = config.wsPort ?? 8080
+const port = config.port ?? 8080
 
 const context: AgentContext = {
   isEnabled: true,

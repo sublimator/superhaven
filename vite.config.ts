@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 import { readSuperHavenConfig } from './src/wrapper/config/read-super-haven-config'
 
 const config = readSuperHavenConfig()
-const port = config.wsPort ?? 8080
+const port = config.port ?? 8080
 const url = `ws://localhost:${port}`
 
 export default defineConfig({
