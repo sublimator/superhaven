@@ -1,4 +1,4 @@
-import { AgentMessage } from './messages.ts'
+import { AgentMessage } from './messages'
 
 export interface EventData {
   id: number // auto incrementing id

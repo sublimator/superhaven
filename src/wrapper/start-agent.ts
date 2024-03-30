@@ -2,7 +2,8 @@ import { AgentContext, EventSink, LogSink } from './types.ts'
 import { makeHandleInputData } from './handle-input-data.ts'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import { makeOutputFactory } from './make-output-factory.ts'
-import { AgentOutMessage } from '../types/messages.ts'
+
+import { AgentOutMessage } from '../types/messages/agent-out-messages.ts'
 
 export function startAgent(
   binaryPath: string,

@@ -1,5 +1,6 @@
 import { LogSink } from './types.ts'
-import { AgentOutMessage } from '../types/messages.ts'
+
+import { AgentOutMessage } from '../types/messages/agent-out-messages.ts'
 
 export function makeOutputFactory(
   type: string,

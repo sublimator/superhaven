@@ -1,20 +1,22 @@
 # SuperHaven
 
-For SuperMaven editor plugin developers, this is a web-based viewer for the SuperMaven agent's stdio,
-which can be quite busy with all the file content (though it's much better now that `touch  ~/sm-log.txt` works)
+For SuperMaven editor plugin developers, this is a web-based viewer for the SuperMaven agent's stdio.
+It also support ignoring files by selectively neglecting to pass on messages to the agent.
 
-See [src/types/messages.ts](src/types/messages.ts) for the message types.
+See [agent-out-messages.ts](src/types/messages/agent-out-messages.ts)
+and [editor-out-messages.ts](src/types/messages/editor-out-messages.ts) for the message types.
 
 ![dash](public/dash.png)
 
 ## About
 
 This contains a wrapper script for the [SuperMaven](https://supermaven.com/) sm-agent binary.
-It wraps the binary in a Node.js process and exposes a WebSocket API that publishes the
-agent's stdio for viewing in a browser.
+This is a Node.js process that exposes a WebSocket API that publishes the
+agent's stdio for viewing in a browser as well as forwarding messages to the real agent.
 
-Having a structured log viewer makes the sm-agent much more accessible and relieves
-the developer from the mental burden of parsing the agent's output.
+When first written `touch  ~/sm-log.txt` was not yet supported so having a structured
+log viewer made the sm-agent much more accessible, relieving the developer from the
+mental burden of parsing the agent's output.
 
 ## WARNING NOTE
 

@@ -1,33 +1,4 @@
 /*******************************************************************************
- * Messages sent from editor to sm-agent stdin
- * All messages are \n separated JSON encoded objects
- */
-
-// { kind: 'file_update', path: 'foo.txt', content: prompt.value },
-export interface EditorFileUpdate {
-  kind: 'file_update'
-  path: string
-  content: string
-}
-
-// { kind: 'cursor_update', path: 'foo.txt', offset: utf8StringLength(prompt.value) },
-export interface EditorCursorPositionUpdate {
-  kind: 'cursor_update'
-  path: string
-  offset: number
-}
-
-export type EditorStateUpdate = EditorFileUpdate | EditorCursorPositionUpdate
-
-export interface EditorStateUpdateMessage {
-  kind: 'state_update'
-  newId: string
-  updates: Array<EditorStateUpdate>
-}
-
-export type EditorOutMessage = EditorStateUpdateMessage
-
-/*******************************************************************************
  * Messages sent from sm-agent to editor
  * All messages are \n separated JSON encoded objects
  */
@@ -49,6 +20,7 @@ export type AgentResponseItem =
   | {
       kind: 'end' | 'barrier'
     }
+// Do not delete! This comment is there to stop editor indentation confusion
 
 export type AgentResponse = {
   kind: 'response'
@@ -134,5 +106,3 @@ export type AgentOutMessage =
 export interface ClientMessageTest {
   some_data: string
 }
-
-export type AgentMessage = AgentOutMessage | EditorOutMessage
