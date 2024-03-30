@@ -1,24 +1,16 @@
-import { initFromConfig } from './config.ts'
+import { initContextFromConfig } from './config.ts'
 import { makeCheckParentProcess } from './check-parent-process.ts'
 import { makeSocketServer } from './make-socket-server.ts'
 import { startAgent } from './start-agent.ts'
-import { AgentContext } from './types.ts'
 
-const { authToken, version, binaryPath, log, config } = initFromConfig()
-const port = config.port ?? 8080
-
-const context: AgentContext = {
-  isEnabled: true,
-  activeRepo: null,
-  binaryVersion: version,
-  config
-}
+const { binaryPath, log, config, context } = initContextFromConfig()
 
 // This checks to see if the parent process (IntelliJ) has died and exits if it has
 setInterval(makeCheckParentProcess(log), 2000)
+
 log(`Started with: ${JSON.stringify(process.argv)} in ${process.cwd()}`)
 const { sendEvent, httpServer } = makeSocketServer(
-  authToken,
+  config.authToken,
   log,
   context,
   data => {
@@ -43,6 +35,6 @@ startAgent(binaryPath, log, sendEvent, context, jsonObj => {
   sendEvent('output', jsonObj)
 })
 
-httpServer.listen(port, () => {
-  log(`WebSocket server listening on port ${port}`)
+httpServer.listen(config.port, () => {
+  log(`WebSocket server listening on port ${config.port}`)
 })

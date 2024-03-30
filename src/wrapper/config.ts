@@ -3,7 +3,7 @@ import { join } from 'path'
 import { createWriteStream } from 'fs'
 import { die } from './die.ts'
 import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
-import { SuperHavenConfig } from './types.ts'
+import { AgentContext, SuperHavenConfig } from './types.ts'
 import { expandTildeInPaths } from './expand-tilde-in-paths.ts'
 import { getAgentVersion } from './get-agent-version.ts'
 
@@ -24,7 +24,7 @@ function createLog(config: SuperHavenConfig) {
   }
 }
 
-export function initFromConfig() {
+export function initContextFromConfig() {
   const config = expandTildeInPaths(readSuperHavenConfig())
   if (!config.authToken) {
     die('No auth token found in superhaven.config.json')
@@ -36,7 +36,16 @@ export function initFromConfig() {
   if (!fs.existsSync(binaryPath)) {
     die(`sm-agent-real not found at ${binaryPath}`)
   }
-  const version = getAgentVersion(binaryPath)
+  const binaryVersion = getAgentVersion(binaryPath)
   const log = createLog(config)
-  return { authToken: config.authToken, binaryPath, log, config, version }
+
+  config.port ??= 8080
+  const context: AgentContext = {
+    isEnabled: true,
+    activeRepo: null,
+    binaryVersion,
+    config
+  }
+
+  return { binaryPath, log, config, context }
 }
