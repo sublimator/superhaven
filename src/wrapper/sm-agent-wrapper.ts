@@ -1,4 +1,3 @@
-// TODO: use a generic shebang for node
 import { initFromConfig } from './config.ts'
 import { makeCheckParentProcess } from './check-parent-process.ts'
 import { makeSocketServer } from './make-socket-server.ts'
@@ -6,6 +5,8 @@ import { startAgent } from './start-agent.ts'
 import { AgentContext } from './types.ts'
 
 const { authToken, version, binaryPath, log, config } = initFromConfig()
+const port = config.wsPort ?? 8080
+
 const context: AgentContext = {
   isEnabled: true,
   activeRepo: null,
@@ -42,7 +43,6 @@ startAgent(binaryPath, log, sendEvent, context, jsonObj => {
   sendEvent('output', jsonObj)
 })
 
-// Start the HTTP server on a specified port, for example, 8080
-httpServer.listen(8080, () => {
-  log('WebSocket server listening on port 8080')
+httpServer.listen(port, () => {
+  log(`WebSocket server listening on port ${port}`)
 })

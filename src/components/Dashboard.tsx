@@ -17,6 +17,7 @@ import { MessageComponent } from './MessageComponent.tsx'
 import { getMessagePairingId } from './getMessagePairingId.ts'
 import { InfoTable } from './InfoTable.tsx'
 import type { ServerMessage } from '../wrapper/types.ts'
+import { nonNullable } from '../utils/non-nullable.ts'
 
 const token = process.env.SUPER_HAVEN_AUTH_TOKEN!
 
@@ -39,7 +40,10 @@ export const DashBoard: React.FC = () => {
     EventData,
     ServerMessage
   >({
-    url: 'ws://localhost:8080',
+    url: nonNullable(
+      process.env.SUPER_HAVEN_WS_URL,
+      'process.env.SUPER_HAVEN_WS_URL not set'
+    ),
     token: token,
     reconnect: true,
     keepUpTo: 50,

@@ -61,6 +61,7 @@ interface ProjectConfig {
 
 export interface SuperHavenConfig {
   logFile?: string
+  wsPort?: number
   binaryDirectory: string
   authToken: string
   projects: Record<ProjectName, ProjectConfig>
