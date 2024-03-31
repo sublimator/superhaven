@@ -40,7 +40,7 @@ export interface WebSocketMessageHandler {
   (data: ClientMessage, sendMessage: (message: object) => void): void
 }
 
-interface ParsedAndDefaultedContext extends SuperHavenConfig {
+export interface ParsedAndDefaultedConfig extends SuperHavenConfig {
   port: number
 }
 
@@ -48,7 +48,7 @@ export interface AgentContext {
   isEnabled: boolean
   binaryVersion: number
   activeRepo: string | null
-  config: ParsedAndDefaultedContext
+  config: ParsedAndDefaultedConfig
 }
 
 // Matching the project set by kind:active_repo
