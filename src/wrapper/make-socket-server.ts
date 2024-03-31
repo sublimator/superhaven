@@ -10,11 +10,10 @@ import {
 } from './types.ts'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createServer } from 'http'
-import { nonNullable } from '../utils/non-nullable.ts'
 import { makePostHandler } from './make-post-handler.ts'
+import { isRequestUnauthorized } from './is-request-unauthorized.ts'
 
 export function makeSocketServer(
-  authToken: string,
   log: LogSink,
   context: AgentContext,
   messageHandler: WebSocketMessageHandler
@@ -48,22 +47,14 @@ export function makeSocketServer(
     }
   }
 
-  const postHandler = makePostHandler(messageHandler, log)
+  const postHandler = makePostHandler(messageHandler, log, context)
   const httpServer = createServer(postHandler)
   const wss = new WebSocketServer({ noServer: true })
 
   httpServer.on('upgrade', function (request, socket, head) {
     log(`Upgrade request: ${request.url}`)
-
-    const url = new URL(
-      nonNullable(request.url, 'request.url not set'),
-      `http://localhost:${context.config.port}`
-    )
-    const token = url.searchParams.get('token')
-    const noAuthHeader =
-      !request.headers.authorization ||
-      request.headers.authorization !== `Bearer ${authToken}`
-    if (noAuthHeader && token !== authToken) {
+    const unAuthorized = isRequestUnauthorized(request, context)
+    if (unAuthorized) {
       socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
       socket.destroy()
       return

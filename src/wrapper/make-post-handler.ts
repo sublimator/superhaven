@@ -1,9 +1,11 @@
-import { LogSink, WebSocketMessageHandler } from './types.ts'
+import { AgentContext, LogSink, WebSocketMessageHandler } from './types.ts'
 import { IncomingMessage, ServerResponse } from 'node:http'
+import { isRequestUnauthorized } from './is-request-unauthorized.ts'
 
 export function makePostHandler(
   messageHandler: WebSocketMessageHandler,
-  log: LogSink
+  log: LogSink,
+  context: AgentContext
 ) {
   return (req: IncomingMessage, res: ServerResponse) => {
     // Handle HTTP POST requests
@@ -11,6 +13,13 @@ export function makePostHandler(
       req.method === 'POST' &&
       req.headers['content-type'] === 'application/json'
     ) {
+      const unAuthorized = isRequestUnauthorized(req, context)
+      if (unAuthorized) {
+        res.writeHead(403)
+        res.end('Forbidden')
+        return
+      }
+
       let body = ''
       req.on('data', chunk => {
         body += chunk.toString() // Convert Buffer to string
