@@ -39,12 +39,11 @@ export function initContextFromConfig() {
   const binaryVersion = getAgentVersion(binaryPath)
   const log = createLog(config)
 
-  config.port ??= 8080
   const context: AgentContext = {
     isEnabled: true,
     activeRepo: null,
     binaryVersion,
-    config
+    config: { ...config, port: config.port ?? 8080 }
   }
 
   return { binaryPath, log, config, context }

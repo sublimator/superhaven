@@ -1,5 +1,6 @@
 import {
   AgentContext,
+  ClientMessage,
   DataType,
   EventData,
   EventType,
@@ -9,6 +10,8 @@ import {
 } from './types.ts'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createServer } from 'http'
+import { nonNullable } from '../utils/non-nullable.ts'
+import { makePostHandler } from './make-post-handler.ts'
 
 export function makeSocketServer(
   authToken: string,
@@ -45,13 +48,17 @@ export function makeSocketServer(
     }
   }
 
-  const httpServer = createServer()
+  const postHandler = makePostHandler(messageHandler, log)
+  const httpServer = createServer(postHandler)
   const wss = new WebSocketServer({ noServer: true })
 
   httpServer.on('upgrade', function (request, socket, head) {
     log(`Upgrade request: ${request.url}`)
 
-    const url = new URL(request.url!, 'http://localhost:8080')
+    const url = new URL(
+      nonNullable(request.url, 'request.url not set'),
+      `http://localhost:${context.config.port}`
+    )
     const token = url.searchParams.get('token')
     const noAuthHeader =
       !request.headers.authorization ||
@@ -67,11 +74,13 @@ export function makeSocketServer(
       wss.emit('connection', ws, request)
       const msg: InitCommand = { kind: 'init', data: context }
       ws.send(JSON.stringify(msg))
-      ws.on('message', message => {
+      ws.on('message', rawWsMessage => {
         try {
-          const messageData = JSON.parse(message.toString())
-          messageHandler(messageData, (message: unknown) => {
-            ws.send(JSON.stringify(message))
+          const messageData = JSON.parse(
+            rawWsMessage.toString()
+          ) as ClientMessage
+          messageHandler(messageData, (message: object) => {
+            ws.send(JSON.stringify({ id: messageData.id, ...message }))
           })
         } catch (e) {
           log(`Error parsing message: ${e}`)
