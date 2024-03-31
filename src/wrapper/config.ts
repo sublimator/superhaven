@@ -3,7 +3,11 @@ import { join } from 'path'
 import { createWriteStream } from 'fs'
 import { die } from './die.ts'
 import { readSuperHavenConfig } from './config/read-super-haven-config.ts'
-import { AgentContext, SuperHavenConfig } from './types.ts'
+import {
+  AgentContext,
+  ParsedAndDefaultedConfig,
+  SuperHavenConfig
+} from './types.ts'
 import { expandTildeInPaths } from './expand-tilde-in-paths.ts'
 import { getAgentVersion } from './get-agent-version.ts'
 
@@ -39,13 +43,17 @@ export function initContextFromConfig() {
   const binaryVersion = getAgentVersion(binaryPath)
   const log = createLog(config)
 
-  config.port ??= 8080
+  const defaultedConfig: ParsedAndDefaultedConfig = {
+    ...config,
+    port: config.port ?? 8080
+  }
+
   const context: AgentContext = {
     isEnabled: true,
     activeRepo: null,
     binaryVersion,
-    config
+    config: defaultedConfig
   }
 
-  return { binaryPath, log, config, context }
+  return { binaryPath, log, config: defaultedConfig, context }
 }

@@ -37,14 +37,18 @@ export type ClientMessage = DieCommand | SetEnabledCommand
 export type ServerMessage = InitCommand
 
 export interface WebSocketMessageHandler {
-  (data: ClientMessage, sendMessage: (message: unknown) => void): void
+  (data: ClientMessage, sendMessage: (message: object) => void): void
+}
+
+export interface ParsedAndDefaultedConfig extends SuperHavenConfig {
+  port: number
 }
 
 export interface AgentContext {
   isEnabled: boolean
   binaryVersion: number
   activeRepo: string | null
-  config: SuperHavenConfig
+  config: ParsedAndDefaultedConfig
 }
 
 // Matching the project set by kind:active_repo

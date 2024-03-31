@@ -1,5 +1,6 @@
 import {
   AgentContext,
+  ClientMessage,
   DataType,
   EventData,
   EventType,
@@ -9,9 +10,10 @@ import {
 } from './types.ts'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createServer } from 'http'
+import { makePostHandler } from './make-post-handler.ts'
+import { isRequestUnauthorized } from './is-request-unauthorized.ts'
 
 export function makeSocketServer(
-  authToken: string,
   log: LogSink,
   context: AgentContext,
   messageHandler: WebSocketMessageHandler
@@ -45,18 +47,14 @@ export function makeSocketServer(
     }
   }
 
-  const httpServer = createServer()
+  const postHandler = makePostHandler(messageHandler, log, context)
+  const httpServer = createServer(postHandler)
   const wss = new WebSocketServer({ noServer: true })
 
   httpServer.on('upgrade', function (request, socket, head) {
     log(`Upgrade request: ${request.url}`)
-
-    const url = new URL(request.url!, 'http://localhost:8080')
-    const token = url.searchParams.get('token')
-    const noAuthHeader =
-      !request.headers.authorization ||
-      request.headers.authorization !== `Bearer ${authToken}`
-    if (noAuthHeader && token !== authToken) {
+    const unAuthorized = isRequestUnauthorized(request, context)
+    if (unAuthorized) {
       socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
       socket.destroy()
       return
@@ -67,11 +65,13 @@ export function makeSocketServer(
       wss.emit('connection', ws, request)
       const msg: InitCommand = { kind: 'init', data: context }
       ws.send(JSON.stringify(msg))
-      ws.on('message', message => {
+      ws.on('message', rawWsMessage => {
         try {
-          const messageData = JSON.parse(message.toString())
-          messageHandler(messageData, (message: unknown) => {
-            ws.send(JSON.stringify(message))
+          const messageData = JSON.parse(
+            rawWsMessage.toString()
+          ) as ClientMessage
+          messageHandler(messageData, (message: object) => {
+            ws.send(JSON.stringify({ id: messageData.id, ...message }))
           })
         } catch (e) {
           log(`Error parsing message: ${e}`)
