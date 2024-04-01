@@ -72,7 +72,7 @@ export function makeHandleInputData(
         if (ignored) {
           sendEvent('input', { ...editorMessage, ignored: true })
         } else {
-          stream.write(line)
+          stream.write(line.includes('\n') ? line : line + '\n')
           sendEvent('input', editorMessage)
         }
       }

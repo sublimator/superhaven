@@ -52,10 +52,10 @@ if (!fs.existsSync(config.binaryDirectory)) {
 }
 if (fs.existsSync(`${config.binaryDirectory}/sm-agent-real`)) {
   log('sm-agent-real already exists in binary directory, restoring')
-  cmd(`mv ${smAgentRealPath} ${smAgentPath}`)
+  cmd(`mv "${smAgentRealPath}" "${smAgentPath}"`)
 }
 
 cmd('pnpm build:wrapper')
-cmd(`chmod +x ${wrapperBuildPath}`)
-cmd(`mv ${smAgentPath} ${smAgentRealPath}`)
-cmd(`ln -s ${wrapperBuildPath} sm-agent`, config.binaryDirectory)
+cmd(`chmod +x "${wrapperBuildPath}"`)
+cmd(`mv "${smAgentPath}" "${smAgentRealPath}"`)
+cmd(`ln -s "${wrapperBuildPath}" sm-agent`, config.binaryDirectory)

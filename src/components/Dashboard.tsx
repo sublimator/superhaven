@@ -26,9 +26,11 @@ export const DashBoard: React.FC = () => {
   const [activeRepo, setActiveRepo] = useState<string | null>(null)
   const [serviceTier, setServiceTier] = useState<string | null>(null)
   const [enabled, setEnabled] = useState<boolean>(true)
+  const [env, setEnv] = useState<object>({})
   const [binaryVersion, setBinaryVersion] = useState<number | null>(null)
 
   const state = {
+    env,
     binaryVersion,
     token,
     stateId,
@@ -56,11 +58,13 @@ export const DashBoard: React.FC = () => {
       setServiceTier(null)
       setStateId(null)
       setBinaryVersion(null)
+      setEnv({})
     },
     onCommand: command => {
       if (command.kind === 'init') {
         setEnabled(command.data.isEnabled)
         setBinaryVersion(command.data.binaryVersion)
+        setEnv(command.data.env)
       }
     },
     onMessage: message => {

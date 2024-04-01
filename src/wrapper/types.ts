@@ -1,4 +1,6 @@
 // Define types for the event data
+import { EditorOutMessage } from '../types/messages/editor-out-messages.ts'
+
 export type EventType = 'input' | 'output'
 export type DataType = unknown
 
@@ -28,12 +30,20 @@ export interface SetEnabledCommand extends Command {
   enabled: boolean
 }
 
+export interface SetAllowGitignoreCommand extends Command {
+  kind: 'set-allow-gitignore'
+  allowGitignore: boolean
+}
+
 export interface InitCommand extends Command {
   kind: 'init'
   data: AgentContext
 }
 
-export type ClientMessage = DieCommand | SetEnabledCommand
+export type ClientMessage =
+  | DieCommand
+  | SetEnabledCommand
+  | SetAllowGitignoreCommand
 export type ServerMessage = InitCommand
 
 export interface WebSocketMessageHandler {
@@ -44,10 +54,18 @@ export interface ParsedAndDefaultedConfig extends SuperHavenConfig {
   port: number
 }
 
+export interface AgentEnv {
+  SM_EDITOR?: string
+  SM_EDITOR_VERSION?: string
+  SM_EXTENSION_VERSION?: string
+  SM_LOG_PATH?: string
+}
+
 export interface AgentContext {
   isEnabled: boolean
   binaryVersion: number
   activeRepo: string | null
+  env: AgentEnv
   config: ParsedAndDefaultedConfig
 }
 
@@ -66,7 +84,11 @@ interface ProjectConfig {
 export interface SuperHavenConfig {
   logFile?: string
   port?: number
+  // TODO: make this support multiple extensions
+  // This seems only really to de be needed because it's hard to get
+  // folder of the original symlink path executed from the extension
   binaryDirectory: string
+  startMessages?: EditorOutMessage[]
   authToken: string
   projects: Record<ProjectName, ProjectConfig>
 }
