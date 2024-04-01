@@ -10,6 +10,7 @@ interface InfoProps {
   state: {
     binaryVersion: number | null
     token: string
+    env: object
     serviceTier: string | null
     // stateId
     stateId: string | null
@@ -72,6 +73,20 @@ export const InfoTable: React.FC<InfoProps> = ({
           <td>Service tier</td>
           <td>{state.serviceTier ?? UN_KNOWN}</td>
         </tr>
+        {Object.entries(state.env).map(([key, value]) => (
+          <tr key={key}>
+            <td>
+              <Tooltip title={key}>
+                <span>{ellipsis(key, 10)}</span>
+              </Tooltip>
+            </td>
+            <td>
+              <Tooltip title={value}>
+                <span>{ellipsis(value, 10)}</span>
+              </Tooltip>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   )

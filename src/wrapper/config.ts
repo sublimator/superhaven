@@ -52,6 +52,22 @@ export function initContextFromConfig() {
     isEnabled: true,
     activeRepo: null,
     binaryVersion,
+    env: {
+      // All SM_ prefixed env vars are passed through to the agent
+      ...Object.keys(process.env).reduce(
+        (acc, key) => {
+          if (key.startsWith('SM')) {
+            acc[key] = process.env[key]!
+          }
+          return acc
+        },
+        {} as Record<string, string>
+      ),
+      SM_EDITOR: process.env.SM_EDITOR,
+      SM_EDITOR_VERSION: process.env.SM_EDITOR_VERSION,
+      SM_EXTENSION_VERSION: process.env.SM_EXTENSION_VERSION,
+      SM_LOG_PATH: process.env.SM_LOG_PATH
+    },
     config: defaultedConfig
   }
 
