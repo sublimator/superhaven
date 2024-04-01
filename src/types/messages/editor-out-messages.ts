@@ -30,4 +30,17 @@ export interface EditorGreetingMessage {
   allowGitignore: boolean
 }
 
-export type EditorOutMessage = EditorStateUpdateMessage | EditorGreetingMessage
+interface LogoutMessage {
+  kind: 'logout'
+}
+
+interface UseFreeVersionMessage {
+  kind: 'use_free_version'
+  email: string
+}
+
+export type EditorOutMessage =
+  | EditorStateUpdateMessage
+  | EditorGreetingMessage
+  | LogoutMessage
+  | UseFreeVersionMessage
