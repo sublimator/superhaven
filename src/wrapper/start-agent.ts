@@ -4,12 +4,14 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import { makeOutputFactory } from './make-output-factory.ts'
 
 import { AgentOutMessage } from '../types/messages/agent-out-messages.ts'
+import { EditorOutMessage } from '../types/messages/editor-out-messages.ts'
 
 export function startAgent(
   binaryPath: string,
   log: LogSink,
   sendEvent: EventSink,
   context: AgentContext,
+  startMessages: EditorOutMessage[],
   onOutMessage: (message: AgentOutMessage) => void
 ) {
   const handleInputData = makeHandleInputData(log, sendEvent, context)
@@ -46,4 +48,10 @@ export function startAgent(
     console.error(`Failed to start subprocess: ${err}`)
     log(`Failed to start subprocess: ${err}`)
   })
+
+  startMessages.forEach(message => {
+    childProcess.stdin.write(JSON.stringify(message) + '\n')
+  })
+
+  return { childInput: childProcess.stdin }
 }

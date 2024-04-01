@@ -1,4 +1,6 @@
 // Define types for the event data
+import { EditorOutMessage } from '../types/messages/editor-out-messages.ts'
+
 export type EventType = 'input' | 'output'
 export type DataType = unknown
 
@@ -28,12 +30,20 @@ export interface SetEnabledCommand extends Command {
   enabled: boolean
 }
 
+export interface SetAllowGitignoreCommand extends Command {
+  kind: 'set-allow-gitignore'
+  allowGitignore: boolean
+}
+
 export interface InitCommand extends Command {
   kind: 'init'
   data: AgentContext
 }
 
-export type ClientMessage = DieCommand | SetEnabledCommand
+export type ClientMessage =
+  | DieCommand
+  | SetEnabledCommand
+  | SetAllowGitignoreCommand
 export type ServerMessage = InitCommand
 
 export interface WebSocketMessageHandler {
@@ -67,6 +77,7 @@ export interface SuperHavenConfig {
   logFile?: string
   port?: number
   binaryDirectory: string
+  startMessages?: EditorOutMessage[]
   authToken: string
   projects: Record<ProjectName, ProjectConfig>
 }

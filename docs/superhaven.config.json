@@ -1,6 +1,12 @@
 {
   "binaryDirectory": "~/.supermaven/binary/v9/macosx-aarch64",
   "authToken": "OPEN_SESAME",
+  "startMessages": [
+    {
+      "kind": "greeting",
+      "allowGitignore": false
+    }
+  ],
   "projects": {
     "superhaven": {
       "root": "~/projects/superhaven",

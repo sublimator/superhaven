@@ -25,4 +25,9 @@ export interface EditorStateUpdateMessage {
   updates: Array<EditorStateUpdate>
 }
 
-export type EditorOutMessage = EditorStateUpdateMessage
+export interface EditorGreetingMessage {
+  kind: 'greeting'
+  allowGitignore: boolean
+}
+
+export type EditorOutMessage = EditorStateUpdateMessage | EditorGreetingMessage
