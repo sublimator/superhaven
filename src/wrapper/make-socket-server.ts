@@ -12,6 +12,7 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { createServer } from 'http'
 import { makePostHandler } from './make-post-handler.ts'
 import { isRequestUnauthorized } from './is-request-unauthorized.ts'
+import { nonNullable } from '../utils/non-nullable.ts'
 
 export function makeSocketServer(
   log: LogSink,
@@ -30,15 +31,9 @@ export function makeSocketServer(
       if (wss.clients.size > 0) {
         wss.clients.forEach(client => {
           if (client.readyState === WebSocket.OPEN) {
-            for (const line of buffer) {
-              client.send(line)
-            }
             client.send(serialized)
           }
         })
-        while (buffer.length > 0) {
-          buffer.pop()
-        }
       } else {
         buffer.push(serialized)
       }
@@ -65,6 +60,11 @@ export function makeSocketServer(
       wss.emit('connection', ws, request)
       const msg: InitCommand = { kind: 'init', data: context }
       ws.send(JSON.stringify(msg))
+
+      while (buffer.length) {
+        ws.send(nonNullable(buffer.shift()))
+      }
+
       ws.on('message', rawWsMessage => {
         try {
           const messageData = JSON.parse(
